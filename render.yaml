@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: face-vitals-ai
+    env: python
+    buildCommand: "pip install -r api/requirements.txt"
+    startCommand: "python api/app.py"
+    plan: free
+    healthCheckPath: /
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.9.18
