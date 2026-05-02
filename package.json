@@ -1,0 +1,24 @@
+{
+  "name": "face-vitals-ai",
+  "version": "1.0.0",
+  "description": "Real-time heart rate and blood pressure monitoring using facial detection",
+  "main": "api/app.py",
+  "scripts": {
+    "dev": "vercel dev",
+    "build": "echo 'Build complete'",
+    "start": "python api/app.py"
+  },
+  "keywords": [
+    "face-detection",
+    "heart-rate",
+    "blood-pressure",
+    "computer-vision",
+    "health-monitoring"
+  ],
+  "author": "Aisha Siddiqui",
+  "license": "MIT",
+  "dependencies": {},
+  "devDependencies": {
+    "vercel": "^32.0.0"
+  }
+}

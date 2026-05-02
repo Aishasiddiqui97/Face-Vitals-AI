@@ -72,6 +72,7 @@ class FaceBPDetector:
                     self.debug_status = "Live Monitoring"  # Show as live immediately
                 elif len(self.signal_buffer) < 20:  # Reduced from 30
                     self.debug_status = f"Buffering: {len(self.signal_buffer)}/20"
+                
                 # Extract Green channel mean
                 green_mean = np.mean(roi[:, :, 1])
                 self.signal_buffer.append(green_mean)

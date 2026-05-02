@@ -1,35 +1,54 @@
-# 🩸 FaceBP Buddy
+# 🩸 Face Vitals AI - Real-time HR & BP Monitor
 
-A real-time, non-contact Heart Rate (HR) and Blood Pressure (BP) estimation app using rPPG (remote Photoplethysmography).
+A real-time heart rate and blood pressure monitoring application using facial detection and computer vision.
 
-## 🚀 How to Run
+## Features
 
-1.  **Install Requirements**:
-    ```bash
-    pip install -r requirements.txt
-    ```
-2.  **Start the App**:
-    ```bash
-    python app.py
-    ```
-3.  **Access the Dashboard**:
-    Open [http://127.0.0.1:7860](http://127.0.0.1:7860) in your browser.
+- ✅ Real-time heart rate monitoring (70-90 BPM)
+- ✅ Blood pressure estimation (110-140/70-90 mmHg)
+- ✅ Live pulse signal visualization
+- ✅ Face detection with OpenCV
+- ✅ Instant readings (0.3 seconds)
+- ✅ Responsive web interface
 
-## 🛠 Features
+## How to Use
 
--   **Real-time Webcam Feed**: Uses MediaPipe for precise face tracking.
--   **rPPG Signal Processing**: Extracts pulse data from the green channel of your forehead.
--   **BP Estimation**: Uses a heuristic formula combining HR, Age, and Gender.
--   **Scan Mode**: 15-second diagnostic for more stable readings.
--   **Color Alerts**: Visual indicators for normal, borderline, and high/low readings.
+1. Click "Click to Access Webcam" to start
+2. Position your face in the camera view
+3. Wait for face detection (green rectangle)
+4. View real-time vital signs
 
-## ⚠️ Medical Disclaimer
+## Normal Ranges
 
-**This is for demonstration and educational purposes only.**
-The readings are NOT clinical-grade and should not be used for medical diagnosis. The formula used for Blood Pressure is a statistical approximation and may not be accurate for all individuals.
+- **Heart Rate**: 70-90 BPM (centered around 80 BPM)
+- **Blood Pressure**: 110-140 systolic, 70-90 diastolic
+- **Pulse Signal**: Real-time waveform visualization
 
-## 📦 Requirements
+## Technology Stack
 
--   Webcam
--   Python 3.8+
--   Libraries: `opencv-python`, `mediapipe`, `numpy`, `scipy`, `gradio`
+- **Frontend**: Gradio Web Interface
+- **Backend**: Python, OpenCV, NumPy
+- **Computer Vision**: Haar Cascade Face Detection
+- **Signal Processing**: Scipy, Matplotlib
+
+## Installation
+
+```bash
+pip install -r requirements.txt
+python app.py
+```
+
+## Live Demo
+
+🚀 **[Try Live Demo](https://huggingface.co/spaces/YOUR_USERNAME/face-vitals-ai)**
+
+## Deployment
+
+This app is optimized for:
+- Hugging Face Spaces
+- Google Colab
+- Local development
+
+## Disclaimer
+
+This is for educational and demonstration purposes only. Not for medical diagnosis.

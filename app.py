@@ -1,6 +1,8 @@
 import gradio as gr
 import cv2
 import numpy as np
+import matplotlib
+matplotlib.use('Agg')  # Use non-interactive backend for speed
 import matplotlib.pyplot as plt
 from facebp_core import FaceBPDetector
 import time
@@ -62,12 +64,20 @@ def process_video(image, age, gender, mode, state):
     else:
         bp_text = f"{bp[0]}/{bp[1]}"
     
-    # Create Pulse Plot
-    fig, ax = plt.subplots(figsize=(4, 2))
-    ax.plot(pulse_trace, color='#ff0000', linewidth=2)
+    # Create Pulse Plot - Always show something
+    fig, ax = plt.subplots(figsize=(3, 1.5))  # Smaller size for faster rendering
+    
+    if pulse_trace and any(x != 0.5 for x in pulse_trace):  # Real signal
+        ax.plot(pulse_trace, color='#ff0000', linewidth=1)
+        ax.set_title("Live Pulse Signal", fontsize=8, color='green')
+    else:  # Flat line or no signal
+        ax.plot(pulse_trace if pulse_trace else [0.5]*30, color='#cccccc', linewidth=1)
+        ax.set_title("Waiting for Signal...", fontsize=8, color='gray')
+    
     ax.set_ylim(-0.1, 1.1)
     ax.axis('off')
     fig.patch.set_alpha(0)
+    plt.tight_layout(pad=0)
     
     return display_frame, hr_text, bp_text, scan_status, state, fig
 

@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🩸 Face Vitals AI</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: white;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .main-content {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .video-section {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .stats-section {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        #video {
+            width: 100%;
+            max-width: 640px;
+            height: 480px;
+            border-radius: 10px;
+            background: #000;
+        }
+        
+        #canvas {
+            width: 100%;
+            max-width: 640px;
+            height: 480px;
+            border-radius: 10px;
+            display: none;
+        }
+        
+        .vital-card {
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        
+        .vital-value {
+            font-size: 2rem;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        
+        .vital-label {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+        
+        .controls {
+            margin-top: 20px;
+        }
+        
+        .control-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            font-size: 16px;
+        }
+        
+        input::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+        
+        button {
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            transition: transform 0.2s;
+            width: 100%;
+            margin-top: 10px;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+        }
+        
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        
+        .pulse-chart {
+            width: 100%;
+            height: 100px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 5px;
+            margin-top: 10px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .status {
+            text-align: center;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+        
+        .disclaimer {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+        
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🩸 Face Vitals AI</h1>
+            <p>Real-time Heart Rate & Blood Pressure Monitor</p>
+        </div>
+        
+        <div class="main-content">
+            <div class="video-section">
+                <h3>📹 Live Camera Feed</h3>
+                <video id="video" autoplay muted></video>
+                <canvas id="canvas"></canvas>
+                <button id="startBtn">📷 Start Camera</button>
+                <div class="status" id="status">Click "Start Camera" to begin</div>
+            </div>
+            
+            <div class="stats-section">
+                <h3>📊 Live Vital Signs</h3>
+                
+                <div class="vital-card">
+                    <div class="vital-label">❤️ Heart Rate</div>
+                    <div class="vital-value" id="heartRate">-- bpm</div>
+                </div>
+                
+                <div class="vital-card">
+                    <div class="vital-label">🩸 Blood Pressure</div>
+                    <div class="vital-value" id="bloodPressure">--/--</div>
+                </div>
+                
+                <div class="vital-card">
+                    <div class="vital-label">📈 Pulse Signal</div>
+                    <div class="pulse-chart" id="pulseChart"></div>
+                </div>
+                
+                <div class="controls">
+                    <h4>⚙️ Settings</h4>
+                    <div class="control-group">
+                        <label for="age">👤 Age</label>
+                        <input type="number" id="age" value="25" min="18" max="80">
+                    </div>
+                    <div class="control-group">
+                        <label for="gender">⚧ Gender</label>
+                        <select id="gender">
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="disclaimer">
+            <h4>📋 Normal Ranges</h4>
+            <p><strong>Heart Rate:</strong> 70-90 BPM (resting)</p>
+            <p><strong>Blood Pressure:</strong> 110-140/70-90 mmHg</p>
+            <br>
+            <p><strong>⚠️ Disclaimer:</strong> This is for educational purposes only. Not for medical diagnosis.</p>
+        </div>
+    </div>
+
+    <script>
+        let video, canvas, ctx, stream;
+        let isProcessing = false;
+        
+        document.getElementById('startBtn').addEventListener('click', startCamera);
+        
+        async function startCamera() {
+            try {
+                video = document.getElementById('video');
+                canvas = document.getElementById('canvas');
+                ctx = canvas.getContext('2d');
+                
+                stream = await navigator.mediaDevices.getUserMedia({ 
+                    video: { width: 640, height: 480 } 
+                });
+                
+                video.srcObject = stream;
+                document.getElementById('startBtn').textContent = '🔄 Processing...';
+                document.getElementById('startBtn').disabled = true;
+                document.getElementById('status').textContent = 'Camera started - Position your face in view';
+                
+                // Start processing frames
+                video.addEventListener('loadedmetadata', () => {
+                    canvas.width = video.videoWidth;
+                    canvas.height = video.videoHeight;
+                    processFrames();
+                });
+                
+            } catch (error) {
+                console.error('Camera access denied:', error);
+                document.getElementById('status').textContent = 'Camera access denied. Please allow camera permission.';
+            }
+        }
+        
+        function processFrames() {
+            if (!isProcessing) {
+                isProcessing = true;
+                captureFrame();
+            }
+            setTimeout(processFrames, 500); // Process every 500ms
+        }
+        
+        function captureFrame() {
+            if (video.readyState === video.HAVE_ENOUGH_DATA) {
+                ctx.drawImage(video, 0, 0);
+                const imageData = canvas.toDataURL('image/jpeg', 0.8);
+                
+                const data = {
+                    image: imageData,
+                    age: parseInt(document.getElementById('age').value),
+                    gender: document.getElementById('gender').value
+                };
+                
+                fetch('/api/process', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                })
+                .then(response => response.json())
+                .then(result => {
+                    if (result.success) {
+                        updateVitals(result);
+                    } else {
+                        console.error('Processing error:', result.error);
+                    }
+                    isProcessing = false;
+                })
+                .catch(error => {
+                    console.error('Network error:', error);
+                    isProcessing = false;
+                });
+            } else {
+                isProcessing = false;
+            }
+        }
+        
+        function updateVitals(data) {
+            // Update heart rate
+            const hrText = data.heart_rate > 0 ? `${data.heart_rate} bpm` : '-- bpm';
+            document.getElementById('heartRate').textContent = hrText;
+            
+            // Update blood pressure
+            const bpText = data.blood_pressure[0] > 0 ? 
+                `${data.blood_pressure[0]}/${data.blood_pressure[1]}` : '--/--';
+            document.getElementById('bloodPressure').textContent = bpText;
+            
+            // Update status
+            document.getElementById('status').textContent = data.status;
+            
+            // Update pulse chart (simple visualization)
+            updatePulseChart(data.pulse_trace);
+        }
+        
+        function updatePulseChart(pulseData) {
+            const chart = document.getElementById('pulseChart');
+            const width = chart.offsetWidth;
+            const height = chart.offsetHeight;
+            
+            // Create SVG for pulse visualization
+            let svg = chart.querySelector('svg');
+            if (!svg) {
+                svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+                svg.style.width = '100%';
+                svg.style.height = '100%';
+                chart.appendChild(svg);
+            }
+            
+            // Clear previous path
+            svg.innerHTML = '';
+            
+            if (pulseData && pulseData.length > 0) {
+                const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                let d = '';
+                
+                pulseData.forEach((value, index) => {
+                    const x = (index / (pulseData.length - 1)) * width;
+                    const y = height - (value * height);
+                    d += index === 0 ? `M ${x} ${y}` : ` L ${x} ${y}`;
+                });
+                
+                path.setAttribute('d', d);
+                path.setAttribute('stroke', '#ff0000');
+                path.setAttribute('stroke-width', '2');
+                path.setAttribute('fill', 'none');
+                svg.appendChild(path);
+            }
+        }
+    </script>
+</body>
+</html>
